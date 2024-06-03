@@ -1,12 +1,15 @@
 package com.itheima.controller;
 
+import com.itheima.dto.ChangePwdDto;
 import com.itheima.pojo.Result;
 import com.itheima.pojo.User;
 import com.itheima.service.UserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Md5Util;
+import com.itheima.utils.ThreadLocalUtil;
 import com.itheima.vo.UserRegistrationRequest;
 import jakarta.validation.constraints.Pattern;
+import org.hibernate.validator.constraints.URL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -46,4 +49,31 @@ public class UserController {
         return Result.success(jwtToken);
     }
 
+    @GetMapping("/userInfo")
+    public Result<User> getUserInfo() {
+        User userToken = ThreadLocalUtil.get();
+        User user = userService.findUserById(userToken.getId());
+        return Result.success(user);
+    }
+
+    @PutMapping("/update")
+    public Result update(@RequestBody @Validated User user) {
+        userService.updateUser(user);
+        return Result.success();
+    }
+
+    @PatchMapping("/updateAvatar")
+    public Result updateAvatar(@RequestParam("avatarUrl") @URL String avatarUrl) {
+        User userToken = ThreadLocalUtil.get();
+        userService.updateAvatar(userToken.getId(), avatarUrl);
+        return Result.success();
+    }
+
+    @PatchMapping("updatePwd")
+    public Result updatePwd(@RequestBody @Validated ChangePwdDto changePwdDto) {
+        User userToken = ThreadLocalUtil.get();
+        changePwdDto.setId(userToken.getId());
+        userService.updatePwd(changePwdDto);
+        return Result.success();
+    }
 }
