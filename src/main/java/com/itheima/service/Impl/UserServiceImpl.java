@@ -6,7 +6,9 @@ import com.itheima.pojo.User;
 import com.itheima.service.UserService;
 import com.itheima.utils.JwtUtil;
 import com.itheima.utils.Md5Util;
+import org.assertj.core.util.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
 
     @Override
@@ -66,5 +70,7 @@ public class UserServiceImpl implements UserService {
         //对新密码MD5加密
         String md5Pwd = Md5Util.getMD5String(changePwdDto.getNew_pwd());
         userMapper.updatePwd(changePwdDto.getId(), md5Pwd);
+        //更新密码后在redis删除
+        stringRedisTemplate.delete(Lists.newArrayList(changePwdDto.getId().toString()));
     }
 }

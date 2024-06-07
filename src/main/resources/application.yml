@@ -4,7 +4,15 @@ spring:
     url: jdbc:mysql://101.43.103.208:3306/big_event
     username: root
     password: 123456
-
+  data:
+    redis:
+      host: 101.43.103.208
+      port: 6379
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+
+oss:
+  accessKey: "mVG7Dy4-6Hp_mfOIVZ1ZjaWa3u38cjbEhKmMgjW-"
+  secretKey: "1tDpW0vAck5Q-gzhG2R0L08niwMwpE8WYKDNfJNP"
+  bucket: miluo-oss
